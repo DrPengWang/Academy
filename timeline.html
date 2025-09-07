@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>现代人类发展历史时间轴</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#10B981',
+                        accent: '#F59E0B',
+                        dark: '#1E293B',
+                        light: '#F8FAFC',
+                        nuclear: '#8B4513',
+                        navprimary: '#165DFF' // 导航栏主色，与主页保持一致
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .timeline-dot {
+                @apply absolute w-4 h-4 rounded-full border-4 z-10 transform -translate-x-1/2 transition-all duration-300 hover:scale-150 cursor-pointer;
+            }
+            .timeline-line {
+                @apply absolute h-1 w-full bg-gray-300 top-1/2 transform -translate-y-1/2;
+            }
+            .timeline-item {
+                @apply absolute top-8 transform -translate-x-1/2 w-56 text-center transition-all duration-300 hover:scale-105 cursor-pointer;
+            }
+            .timeline-icon {
+                @apply text-2xl mb-2 mx-auto;
+            }
+            .timeline-container {
+                min-width: 2200px;
+            }
+            .modal-backdrop {
+                @apply fixed inset-0 bg-black bg-opacity-50 z-40 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300;
+            }
+            .modal-backdrop.active {
+                @apply opacity-100 pointer-events-auto;
+            }
+            .modal-content {
+                @apply bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[80vh] overflow-y-auto transform scale-95 transition-transform duration-300;
+            }
+            .modal-backdrop.active .modal-content {
+                @apply scale-100;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen py-0 px-4 md:px-8">
+    <!-- 导航栏 - 已移除时间轴选项 -->
+    <header class="sticky top-0 z-50 bg-white shadow-sm transition-all duration-300">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo 和名称 -->
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <i class="fa fa-graduation-cap text-navprimary text-3xl mr-3"></i>
+                        <div>
+                            <h1 class="text-xl font-bold text-navprimary">鹏博课堂</h1>
+                            <p class="text-xs text-gray-500">Dr. PengWang Academy</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 导航链接 - 桌面版 (已移除时间轴选项) -->
+                <nav class="hidden md:block">
+                    <ul class="flex space-x-8">
+                        <li><a href="index.html" class="text-gray-600 hover:text-navprimary transition-colors">首页</a></li>
+                        <li><a href="courses.html" class="text-gray-600 hover:text-navprimary transition-colors">课程</a></li>
+                        <li><a href="articles.html" class="text-gray-600 hover:text-navprimary transition-colors">文章</a></li>
+                        <li><a href="tools.html" class="text-gray-600 hover:text-navprimary transition-colors">小工具</a></li>
+                        <li><a href="index.html#about" class="text-gray-600 hover:text-navprimary transition-colors">关于我们</a></li>
+                    </ul>
+                </nav>
+                
+                <!-- 移动端菜单按钮 -->
+                <div class="md:hidden">
+                    <button type="button" class="text-gray-500 hover:text-navprimary" id="mobile-menu-button">
+                        <i class="fa fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 移动端导航菜单 (已移除时间轴选项) -->
+        <div class="md:hidden hidden bg-white shadow-md" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="index.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-navprimary hover:bg-navprimary/5 rounded-md">首页</a>
+                <a href="courses.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-navprimary hover:bg-navprimary/5 rounded-md">课程</a>
+                <a href="articles.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-navprimary hover:bg-navprimary/5 rounded-md">文章</a>
+                <a href="tools.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-navprimary hover:bg-navprimary/5 rounded-md">小工具</a>
+                <a href="index.html#about" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-navprimary hover:bg-navprimary/5 rounded-md">关于我们</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto pt-16"> <!-- 添加pt-16以避免内容被导航栏遮挡 -->
+        <!-- 标题部分 -->
+        <div class="text-center mb-12">
+            <h1 class="text-[clamp(1.8rem,5vw,3rem)] font-bold text-dark mb-4">现代人类发展历史时间轴</h1>
+            <p class="text-gray-600 max-w-3xl mx-auto">从晚期智人出现到人工智能时代，记录人类文明发展的关键节点 - By Dr. PENG WANG</p>
+        </div>
+        
+        <!-- 时间轴容器 -->
+        <div class="relative h-40 md:h-60 mb-20 overflow-x-auto pb-8">
+            <div class="timeline-container relative h-full">
+                <!-- 时间轴线 -->
+                <div class="timeline-line"></div>
+                
+                <!-- 时间点1: 约30万年前 - 晚期智人出现 -->
+                <div class="absolute left-[3%] top-1/2" data-timeline="1">
+                    <div class="timeline-dot bg-primary border-white"></div>
+                    <div class="timeline-item">
+                        <div class="timeline-icon text-primary">
+                            <i class="fa fa-user"></i>
+                        </div>
+                        <div class="font-semibold text-primary">约30万年前</div>
+                        <div class="text-sm text-gray-700">晚期智人在非洲出现</div>
+                    </div>
+                </div>
+                
+                <!-- 时间点2: 约7万-5万年前 - 认知革命 -->
+                <div class="absolute left-[10%] top-1/2" data-timeline="2">
+                    <div class="timeline-dot bg-secondary border-white"></div>
+                    <div class="timeline-item">
+                        <div class="timeline-icon text-secondary">
+                            <i class="fa fa-lightbulb-o"></i>
+                        </div>
+                        <div class="font-semibold text-secondary">约7万-5万年前</div>
+                        <div class="text-sm text-gray-700">认知革命</div>
+                    </div>
+                </div>
+                
+                <!-- 时间点3: 约1.2万年前 - 农业革命 -->
+                <div class="absolute left-[17%] top-1/2" data-timeline="3">
+                    <div class="timeline-dot bg-accent border-white"></div>
+                    <div class="timeline-item">
+                        <div class="timeline-icon text-accent">
+                            <i class="fa fa-leaf"></i>
+                        </div>
+                        <div class="font-semibold text-accent">约1.2万年前</div>
+                        <div class="text-sm text-gray-700">农业革命</div>
+                    </div>
+                </div>
+                
+                <!-- 时间点4: 约6000年前 - 最早城市出现 -->
+                <div class="absolute left-[24%] top-1/2" data-timeline="4">
+                    <div class="timeline-dot bg-purple-500 border-white"></div>
+                    <div class="timeline-item">
+                        <div class="timeline-icon text-purple-500">
+                            <i class="fa fa-building"></i>
+                        </div>
+                        <div class="font-semibold text-purple-500">约6000年前</div>
+                        <div class="text-sm text-gray-700">最早城市出现</div>
+                    </div>
+                </div>
+                
+                <!-- 时间点5: 约3500年前 - 文字诞生 -->
+                <div class="absolute left-[31%] top-1/2" data-timeline="5">
+                    <div class="timeline-dot bg-red-500 border-white"></div>
+                    <div class="timeline-item">
+                        <div class="timeline-icon text-red-500">
+                            <i class="fa fa-book"></i>
+                        </div>
+                        <div class="font-semibold text-red-500">约3500年前</div>
+                        <div class="text-sm text-gray-700">文字诞生</div>
+                    </div>
+                </div>
+                
+                <!-- 时间点6: 约2500年前 - 轴心时代 -->
+                <div class="absolute left-[38%] top-1/2" data-timeline="6">
+                    <div class="timeline-dot bg-indigo-500 border-white"></div>
+                    <div class="timeline-item">
+                        <div class="timeline-icon text-indigo-500">
+                            <i class="fa fa-balance-scale"></i>
+                        </div>
+                        <div class="font-semibold text-indigo-500">约2500年前</div>
+                        <div class="text-sm text-gray-700">轴心时代</div>
+                    </div>
+                </div>
+                
+                <!-- 时间点7: 1492年 - 哥伦布发现新大陆 -->
+                <div class="absolute left-[45%] top-1/2" data-timeline="7">
+                    <div class="timeline-dot bg-teal-500 border-white"></div>
+                    <div class="timeline-item">
+                        <div class="timeline-icon text-teal-500">
+                            <i class="fa fa-ship"></i>
+                        </div>
+                        <div class="font-semibold text-teal-500">1492年</div>
+                        <div class="text-sm text-gray-700">发现新大陆</div>
+                    </div>
+                </div>
+                
+                <!-- 时间点8: 18世纪60年代 - 工业革命 -->
+                <div class="absolute left-[52%] top-1/2" data-timeline="8">
+                    <div class="timeline-dot bg-orange-500 border-white"></div>
+                    <div class="timeline-item">
+                        <div class="timeline-icon text-orange-500">
+                            <i class="fa fa-cogs"></i>
+                        </div>
+                        <div class="font-semibold text-orange-500">18世纪60年代</div>
+                        <div class="text-sm text-gray-700">工业革命</div>
+                    </div>
+                </div>
+                
+                <!-- 时间点9: 19世纪末-20世纪初 - 第二次工业革命 -->
+                <div class="absolute left-[59%] top-1/2" data-timeline="9">
+                    <div class="timeline-dot bg-pink-500 border-white"></div>
+                    <div class="timeline-item">
+                        <div class="timeline-icon text-pink-500">
+                            <i class="fa fa-bolt"></i>
+                        </div>
+                        <div class="font-semibold text-pink-500">19世纪末-20世纪初</div>
+                        <div class="text-sm text-gray-700">第二次工业革命</div>
+                    </div>
+                </div>
+                
+                <!-- 时间点10: 1945年 - 核技术诞生 -->
+                <div class="absolute left-[66%] top-1/2" data-timeline="10">
+                    <div class="timeline-dot bg-nuclear border-white"></div>
+                    <div class="timeline-item">
+                        <div class="timeline-icon text-nuclear">
+                            <i class="fa fa-plane"></i>
+                        </div>
+                        <div class="font-semibold text-nuclear">1945年</div>
+                        <div class="text-sm text-gray-700">核技术诞生</div>
+                    </div>
+                </div>
+                
+                <!-- 时间点11: 20世纪60年代 - 计算机与互联网雏形 -->
+                <div class="absolute left-[73%] top-1/2" data-timeline="11">
+                    <div class="timeline-dot bg-blue-400 border-white"></div>
+                    <div class="timeline-item">
+                        <div class="timeline-icon text-blue-400">
+                            <i class="fa fa-laptop"></i>
+                        </div>
+                        <div class="font-semibold text-blue-400">20世纪60年代</div>
+                        <div class="text-sm text-gray-700">计算机与互联网</div>
+                    </div>
+                </div>
+                
+                <!-- 时间点12: 20世纪末-21世纪初 - 移动互联网 -->
+                <div class="absolute left-[80%] top-1/2" data-timeline="12">
+                    <div class="timeline-dot bg-green-400 border-white"></div>
+                    <div class="timeline-item">
+                        <div class="timeline-icon text-green-400">
+                            <i class="fa fa-mobile"></i>
+                        </div>
+                        <div class="font-semibold text-green-400">20世纪末-21世纪初</div>
+                        <div class="text-sm text-gray-700">移动互联网</div>
+                    </div>
+                </div>
+                
+                <!-- 时间点13: 21世纪20年代至今 - 人工智能 -->
+                <div class="absolute left-[87%] top-1/2" data-timeline="13">
+                    <div class="timeline-dot bg-yellow-500 border-white animate-pulse"></div>
+                    <div class="timeline-item">
+                        <div class="timeline-icon text-yellow-500">
+                            <i class="fa fa-microchip"></i>
+                        </div>
+                        <div class="font-semibold text-yellow-500">21世纪20年代至今</div>
+                        <div class="text-sm text-gray-700">人工智能/商业航天</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 图例说明 -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-10">
+            <h2 class="text-xl font-bold text-center mb-6">历史阶段分类</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="flex items-center">
+                    <div class="w-3 h-3 rounded-full bg-primary mr-2"></div>
+                    <span class="text-sm">人类起源与进化</span>
+                </div>
+                <div class="flex items-center">
+                    <div class="w-3 h-3 rounded-full bg-secondary mr-2"></div>
+                    <span class="text-sm">认知与文化突破</span>
+                </div>
+                <div class="flex items-center">
+                    <div class="w-3 h-3 rounded-full bg-accent mr-2"></div>
+                    <span class="text-sm">农业与早期文明</span>
+                </div>
+                <div class="flex items-center">
+                    <div class="w-3 h-3 rounded-full bg-purple-500 mr-2"></div>
+                    <span class="text-sm">城市与文字发展</span>
+                </div>
+                <div class="flex items-center">
+                    <div class="w-3 h-3 rounded-full bg-red-500 mr-2"></div>
+                    <span class="text-sm">思想与哲学繁荣</span>
+                </div>
+                <div class="flex items-center">
+                    <div class="w-3 h-3 rounded-full bg-indigo-500 mr-2"></div>
+                    <span class="text-sm">地理大发现</span>
+                </div>
+                <div class="flex items-center">
+                    <div class="w-3 h-3 rounded-full bg-teal-500 mr-2"></div>
+                    <span class="text-sm">工业与技术革命</span>
+                </div>
+                <div class="flex items-center">
+                    <div class="w-3 h-3 rounded-full bg-nuclear mr-2"></div>
+                    <span class="text-sm">核时代与航空技术</span>
+                </div>
+                <div class="flex items-center">
+                    <div class="w-3 h-3 rounded-full bg-yellow-500 mr-2"></div>
+                    <span class="text-sm">信息与智能时代</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 底部信息 -->
+        <div class="text-center text-gray-500 text-sm mb-16">
+            <p>时间轴按历史阶段均衡分布，点击任意时间点查看详细说明</p>
+            <p class="mt-2">© 2025 人类文明发展时间轴 | 滑动查看完整时间线</p>
+        </div>
+    </div>
+
+    <!-- 弹窗容器 -->
+    <div id="timeline-modal" class="modal-backdrop">
+        <div class="modal-content p-6 md:p-8">
+            <div class="flex justify-between items-start mb-4">
+                <h3 id="modal-title" class="text-2xl font-bold"></h3>
+                <button id="close-modal" class="text-gray-500 hover:text-gray-700 transition-colors">
+                    <i class="fa fa-times text-xl"></i>
+                </button>
+            </div>
+            <div id="modal-body" class="space-y-4">
+                <!-- 弹窗内容将通过JavaScript动态填充 -->
+            </div>
+            <div class="mt-6 pt-4 border-t border-gray-200">
+                <div class="text-sm text-gray-500 italic">点击空白处或关闭按钮关闭弹窗</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 移动端菜单切换
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // 导航栏滚动效果
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 10) {
+                header.classList.add('shadow');
+                header.classList.remove('shadow-sm');
+            } else {
+                header.classList.remove('shadow');
+                header.classList.add('shadow-sm');
+            }
+        });
+        
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                    
+                    // 关闭移动菜单（如果打开）
+                    if (!mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                }
+            });
+        });
+
+        // 时间点详细信息数据
+        const timelineDetails = [
+            {
+                id: 1,
+                title: "约30万年前：晚期智人在非洲出现",
+                color: "text-primary",
+                content: `
+                    <p>晚期智人（Homo sapiens sapiens）是现代人类的直接祖先，大约30万年前首次出现在非洲大陆。这一时期的人类已经具备了与现代人类相似的生理特征，包括较大的脑容量（平均约1350毫升）、更纤细的骨骼结构和下巴的形成。</p>
+                    <p class="mt-3">与早期人类相比，晚期智人拥有更复杂的工具制作技术，开始使用骨器和复合工具，并掌握了控制火的能力。他们的狩猎技术更加精湛，社会结构也更为复杂，可能已经形成了小型部落。</p>
+                `
+            },
+            {
+                id: 2,
+                title: "约7万-5万年前：认知革命",
+                color: "text-secondary",
+                content: `
+                    <p>认知革命被认为是人类历史上最重大的转折点之一，标志着人类思维能力的飞跃性发展。这一时期的人类突然具备了虚构故事和抽象思维的能力，能够想象并讨论不存在的事物。</p>
+                    <p class="mt-3">语言的复杂化是认知革命的核心特征。与动物和早期人类的简单交流不同，现代人类的语言能够表达复杂概念，描述过去和未来，并传达关于抽象概念的信息。</p>
+                `
+            },
+            {
+                id: 3,
+                title: "约1.2万年前：农业革命",
+                color: "text-accent",
+                content: `
+                    <p>农业革命（又称新石器革命）标志着人类从游牧采集生活方式向定居农业社会的转变。这一革命并非同时发生在世界各地，而是首先在中东的新月沃地出现，随后逐渐扩散到其他地区。</p>
+                    <p class="mt-3">人类开始有意识地培育野生植物和驯化动物，这使得食物来源更加稳定可靠。农业的发展导致了永久定居点的形成，人们不再需要为了寻找食物而不断迁徙。</p>
+                `
+            },
+            {
+                id: 4,
+                title: "约6000年前：最早城市出现",
+                color: "text-purple-500",
+                content: `
+                    <p>最早的城市出现在美索不达米亚平原（今伊拉克南部），其中最著名的是乌鲁克（Uruk）。这座城市建于约公元前4000年，鼎盛时期人口可能达到5万-8万，是当时世界上最大的城市。</p>
+                    <p class="mt-3">城市的出现是人类社会发展的重要里程碑。与之前的村庄不同，城市拥有明显的社会分工、复杂的政治结构和公共建筑。</p>
+                `
+            },
+            {
+                id: 5,
+                title: "约3500年前：文字诞生",
+                color: "text-red-500",
+                content: `
+                    <p>文字的诞生是人类文明发展的关键一步，标志着人类进入了"有史时代"。最早的文字系统出现在美索不达米亚，被称为楔形文字，约公元前3500年由苏美尔人发明。</p>
+                    <p class="mt-3">早期文字主要用于记录经济交易、税收和宗教仪式。楔形文字最初是一种简单的计数系统，后来逐渐发展成为能够表达复杂概念的完整文字系统。</p>
+                `
+            },
+            {
+                id: 6,
+                title: "约2500年前：轴心时代",
+                color: "text-indigo-500",
+                content: `
+                    <p>轴心时代是德国哲学家雅斯贝尔斯提出的概念，指公元前800年至公元前200年间，在世界多个文明中同时出现的思想觉醒时期。这一时期诞生了影响至今的主要哲学和宗教体系。</p>
+                    <p class="mt-3">在中国，这一时期出现了孔子、老子、墨子等思想家，形成了儒家、道家等诸子百家；在印度，佛陀诞生，佛教兴起；在古希腊，苏格拉底、柏拉图、亚里士多德等哲学家奠定了西方哲学的基础。</p>
+                `
+            },
+            {
+                id: 7,
+                title: "1492年：哥伦布发现新大陆",
+                color: "text-teal-500",
+                content: `
+                    <p>1492年8月3日，克里斯托弗·哥伦布率领三艘帆船从西班牙出发，试图寻找一条通往东方的新航线。经过两个多月的航行，他们于10月12日抵达了加勒比海的巴哈马群岛。</p>
+                    <p class="mt-3">这一发现开启了欧洲人对美洲的探索和殖民时期，被称为"地理大发现"的重要组成部分。它打破了美洲与旧大陆之间数千年的隔绝状态。</p>
+                `
+            },
+            {
+                id: 8,
+                title: "18世纪60年代：工业革命",
+                color: "text-orange-500",
+                content: `
+                    <p>工业革命始于18世纪60年代的英国，随后扩展到欧洲和北美。它标志着人类生产方式从手工业向机器生产的重大转变，是人类历史上生产力发展最为迅速的时期之一。</p>
+                    <p class="mt-3">工业革命的起点通常被认为是1765年詹姆斯·瓦特改良蒸汽机，这一发明为工厂提供了可靠的动力来源，彻底改变了生产方式。</p>
+                `
+            },
+            {
+                id: 9,
+                title: "19世纪末-20世纪初：第二次工业革命",
+                color: "text-pink-500",
+                content: `
+                    <p>第二次工业革命始于19世纪70年代，以电力的广泛应用为主要标志。与第一次工业革命相比，第二次工业革命涉及范围更广，科技含量更高，对社会的影响也更为深远。</p>
+                    <p class="mt-3">这一时期的重大发明包括：电力的产生和传输、内燃机、电话、无线电、汽车和飞机等。这些发明彻底改变了人类的生产和生活方式。</p>
+                `
+            },
+            {
+                id: 10,
+                title: "1945年：核技术诞生与航空发展",
+                color: "text-nuclear",
+                content: `
+                    <p>1945年是二战结束的年份，也是人类历史上具有里程碑意义的一年。这一年，美国在新墨西哥州成功进行了世界上第一次核爆炸试验，标志着核技术的正式诞生。同年8月，美军使用B-29轰炸机在日本广岛和长崎投下了原子弹。</p>
+                    <p class="mt-3">1945年也见证了航空技术的重大进步，B-29等先进轰炸机能够进行长距离精确轰炸，展示了航空工业的成熟。这些技术在战后和平时期也推动了民用航空的快速发展。</p>
+                    <p class="mt-3">二战的结束还促成了联合国的成立，为战后国际秩序奠定了基础。</p>
+                `
+            },
+            {
+                id: 11,
+                title: "20世纪60年代：计算机与互联网雏形",
+                color: "text-blue-400",
+                content: `
+                    <p>20世纪60年代是计算机和互联网发展的关键时期。1964年，IBM推出了System/360大型计算机，采用了通用架构，为现代计算机奠定了基础。</p>
+                    <p class="mt-3">互联网的雏形ARPANET于1969年由美国国防部高级研究计划局建立，最初仅连接了四个节点，采用了分组交换技术，成为现代互联网的核心基础。</p>
+                `
+            },
+            {
+                id: 12,
+                title: "20世纪末-21世纪初：移动互联网",
+                color: "text-green-400",
+                content: `
+                    <p>移动互联网的兴起是21世纪初最具影响力的科技变革之一。它将移动通讯技术与互联网相结合，使人们能够随时随地接入网络，彻底改变了信息传播和人际交往的方式。</p>
+                    <p class="mt-3">2007年，苹果公司推出iPhone，重新定义了智能手机，使其从简单的通讯工具转变为多功能的移动计算平台。随后，安卓系统的推出进一步推动了智能手机的普及。</p>
+                `
+            },
+            {
+                id: 13,
+                title: "21世纪20年代至今：人工智能/商业航天",
+                color: "text-yellow-500",
+                content: `
+                    <p>21世纪20年代以来，人类社会在科技领域经历了前所未有的快速发展，其中人工智能和商业航天是最引人注目的两个领域。2022年底，ChatGPT的推出标志着生成式人工智能技术的成熟。</p>
+                    <p class="mt-3">与此同时，商业航天也进入了蓬勃发展期。SpaceX、Blue Origin等公司推动了可重复使用火箭技术的发展，显著降低了进入太空的成本。</p>
+                `
+            }
+        ];
+
+        // 获取DOM元素
+        const modal = document.getElementById('timeline-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalBody = document.getElementById('modal-body');
+        const closeModal = document.getElementById('close-modal');
+        const timelineItems = document.querySelectorAll('[data-timeline]');
+
+        // 打开弹窗函数
+        function openModal(id) {
+            // 查找对应的数据
+            const item = timelineDetails.find(item => item.id === parseInt(id));
+            if (item) {
+                // 设置弹窗内容
+                modalTitle.className = `text-2xl font-bold ${item.color}`;
+                modalTitle.textContent = item.title;
+                modalBody.innerHTML = item.content;
+                
+                // 显示弹窗
+                modal.classList.add('active');
+                // 阻止页面滚动
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        // 关闭弹窗函数
+        function closeModalFunc() {
+            modal.classList.remove('active');
+            // 恢复页面滚动
+            document.body.style.overflow = '';
+        }
+
+        // 为时间点添加点击事件
+        timelineItems.forEach(item => {
+            item.addEventListener('click', function() {
+                const id = this.getAttribute('data-timeline');
+                openModal(id);
+            });
+        });
+
+        // 关闭按钮点击事件
+        closeModal.addEventListener('click', closeModalFunc);
+
+        // 点击弹窗背景关闭弹窗
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeModalFunc();
+            }
+        });
+
+        // 键盘ESC键关闭弹窗
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && modal.classList.contains('active')) {
+                closeModalFunc();
+            }
+        });
+
+        // 悬停效果
+        document.querySelectorAll('.timeline-item').forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                this.previousElementSibling.classList.add('ring-4', 'ring-opacity-30');
+            });
+            
+            item.addEventListener('mouseleave', function() {
+                this.previousElementSibling.classList.remove('ring-4', 'ring-opacity-30');
+            });
+        });
+        
+        // 平滑滚动效果
+        document.querySelectorAll('.timeline-dot, .timeline-item').forEach(element => {
+            element.addEventListener('click', function(e) {
+                // 如果点击的是时间点且弹窗未打开，则执行滚动
+                if (!modal.classList.contains('active') || e.target.closest('#timeline-modal')) {
+                    const container = document.querySelector('.overflow-x-auto');
+                    const rect = container.getBoundingClientRect();
+                    const elementRect = this.getBoundingClientRect();
+                    const scrollPosition = container.scrollLeft + (elementRect.left - rect.left) - (rect.width / 2);
+                    
+                    container.scrollTo({
+                        left: scrollPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+    

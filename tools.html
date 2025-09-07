@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>实用小工具 - 鹏博课堂</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navprimary: '#165DFF', // 导航栏主色，与主页保持一致
+                        primary: '#3B82F6',
+                        secondary: '#10B981',
+                        accent: '#F59E0B',
+                        dark: '#1E293B',
+                        light: '#F8FAFC'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .tool-card-hover {
+                @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+            }
+            .tool-icon-container {
+                @apply w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- 导航栏 - 与其他页面保持一致，当前高亮"小工具"选项 -->
+    <header class="sticky top-0 z-50 bg-white shadow-sm transition-all duration-300">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo 和名称 -->
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <i class="fa fa-graduation-cap text-navprimary text-3xl mr-3"></i>
+                        <div>
+                            <h1 class="text-xl font-bold text-navprimary">鹏博课堂</h1>
+                            <p class="text-xs text-gray-500">Dr. PengWang Academy</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 导航链接 - 桌面版 -->
+                <nav class="hidden md:block">
+                    <ul class="flex space-x-8">
+                        <li><a href="index.html" class="text-gray-600 hover:text-navprimary transition-colors">首页</a></li>
+                        <li><a href="courses.html" class="text-gray-600 hover:text-navprimary transition-colors">课程</a></li>
+                        <li><a href="articles.html" class="text-gray-600 hover:text-navprimary transition-colors">文章</a></li>
+                        <li><a href="tools.html" class="text-navprimary font-medium hover:text-navprimary/80 transition-colors">小工具</a></li>
+                        <li><a href="index.html#about" class="text-gray-600 hover:text-navprimary transition-colors">关于我们</a></li>
+                    </ul>
+                </nav>
+                
+                <!-- 移动端菜单按钮 -->
+                <div class="md:hidden">
+                    <button type="button" class="text-gray-500 hover:text-navprimary" id="mobile-menu-button">
+                        <i class="fa fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 移动端导航菜单 -->
+        <div class="md:hidden hidden bg-white shadow-md" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="index.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-navprimary hover:bg-navprimary/5 rounded-md">首页</a>
+                <a href="courses.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-navprimary hover:bg-navprimary/5 rounded-md">课程</a>
+                <a href="articles.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-navprimary hover:bg-navprimary/5 rounded-md">文章</a>
+                <a href="tools.html" class="block px-3 py-2 text-base font-medium text-navprimary bg-navprimary/5 rounded-md">小工具</a>
+                <a href="index.html#about" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-navprimary hover:bg-navprimary/5 rounded-md">关于我们</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- 页面标题 -->
+        <div class="text-center mb-12">
+            <h1 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-dark mb-3">实用小工具</h1>
+            <p class="text-gray-600 max-w-2xl mx-auto">我们开发了一系列实用工具，帮助您更高效地学习、研究和工作</p>
+        </div>
+        
+        <!-- 工具分类 -->
+        <div class="flex flex-wrap justify-center gap-4 mb-10">
+            <button class="px-5 py-2 bg-navprimary text-white rounded-full text-sm font-medium">全部工具</button>
+            <button class="px-5 py-2 bg-white text-gray-700 rounded-full text-sm font-medium hover:bg-gray-100 transition-colors">学习辅助</button>
+            <button class="px-5 py-2 bg-white text-gray-700 rounded-full text-sm font-medium hover:bg-gray-100 transition-colors">数据处理</button>
+            <button class="px-5 py-2 bg-white text-gray-700 rounded-full text-sm font-medium hover:bg-gray-100 transition-colors">时间管理</button>
+            <button class="px-5 py-2 bg-white text-gray-700 rounded-full text-sm font-medium hover:bg-gray-100 transition-colors">思维工具</button>
+            <button class="px-5 py-2 bg-white text-gray-700 rounded-full text-sm font-medium hover:bg-gray-100 transition-colors">历史研究</button>
+        </div>
+        
+        <!-- 工具列表 -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- 人类历史时间轴（第一排第一个） -->
+            <div class="bg-white rounded-xl shadow-sm p-6 tool-card-hover">
+                <div class="tool-icon-container bg-gray-100 text-gray-700">
+                    <i class="fa fa-history text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-center mb-2">人类历史时间轴</h3>
+                <p class="text-gray-600 text-sm text-center mb-4">交互式时间轴展示人类文明关键节点，深入了解历史发展脉络</p>
+                <a href="timeline.html" class="block w-full py-2 text-center bg-navprimary text-white rounded-lg hover:bg-navprimary/90 transition-colors text-sm font-medium">
+                    开始使用
+                </a>
+            </div>
+            
+            <!-- 课堂问答点名器 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 tool-card-hover">
+                <div class="tool-icon-container bg-blue-100 text-navprimary">
+                    <i class="fa fa-random text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-center mb-2">课堂问答点名器</h3>
+                <p class="text-gray-600 text-sm text-center mb-4">随机抽取学生参与课堂问答，增加互动性和参与度</p>
+                <a href="question-caller.html" class="block w-full py-2 text-center bg-navprimary text-white rounded-lg hover:bg-navprimary/90 transition-colors text-sm font-medium">
+                    开始使用
+                </a>
+            </div>
+            
+            <!-- 替换后的工具：学生分组器（原知识图谱构建器位置） -->
+            <div class="bg-white rounded-xl shadow-sm p-6 tool-card-hover">
+                <div class="tool-icon-container bg-green-100 text-secondary">
+                    <i class="fa fa-users text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-center mb-2">学生分组器</h3>
+                <p class="text-gray-600 text-sm text-center mb-4">快速将学生随机或按条件分组，支持自定义分组数量和规则</p>
+                <a href="student-group.html" class="block w-full py-2 text-center bg-navprimary text-white rounded-lg hover:bg-navprimary/90 transition-colors text-sm font-medium">
+                    开始使用
+                </a>
+            </div>
+            
+            <!-- 投资回报计算器 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 tool-card-hover">
+                <div class="tool-icon-container bg-green-100 text-emerald-600">
+                    <i class="fa fa-calculator text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-center mb-2">投资回报计算器</h3>
+                <p class="text-gray-600 text-sm text-center mb-4">计算投资回报率，评估不同投资方案的收益情况</p>
+                <a href="roi-calculator.html" class="block w-full py-2 text-center bg-navprimary text-white rounded-lg hover:bg-navprimary/90 transition-colors text-sm font-medium">
+                    开始使用
+                </a>
+            </div>
+            
+            <!-- 工具 4 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 tool-card-hover">
+                <div class="tool-icon-container bg-purple-100 text-purple-600">
+                    <i class="fa fa-random text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-center mb-2">随机主题生成器</h3>
+                <p class="text-gray-600 text-sm text-center mb-4">生成随机研究和写作主题，激发创意和思考</p>
+                <a href="#" class="block w-full py-2 text-center bg-navprimary text-white rounded-lg hover:bg-navprimary/90 transition-colors text-sm font-medium">
+                    开始使用
+                </a>
+            </div>
+            
+            <!-- 工具 5 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 tool-card-hover">
+                <div class="tool-icon-container bg-red-100 text-red-500">
+                    <i class="fa fa-book text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-center mb-2">文献引用管理器</h3>
+                <p class="text-gray-600 text-sm text-center mb-4">管理学术文献引用，自动生成符合规范的参考文献</p>
+                <a href="#" class="block w-full py-2 text-center bg-navprimary text-white rounded-lg hover:bg-navprimary/90 transition-colors text-sm font-medium">
+                    开始使用
+                </a>
+            </div>
+            
+            <!-- 工具 6 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 tool-card-hover">
+                <div class="tool-icon-container bg-indigo-100 text-indigo-500">
+                    <i class="fa fa-tasks text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-center mb-2">学习计划制定器</h3>
+                <p class="text-gray-600 text-sm text-center mb-4">根据目标自动生成个性化学习计划，跟踪完成情况</p>
+                <a href="#" class="block w-full py-2 text-center bg-navprimary text-white rounded-lg hover:bg-navprimary/90 transition-colors text-sm font-medium">
+                    开始使用
+                </a>
+            </div>
+            
+            <!-- 工具 7 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 tool-card-hover">
+                <div class="tool-icon-container bg-teal-100 text-teal-500">
+                    <i class="fa fa-lightbulb-o text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-center mb-2">思维导图工具</h3>
+                <p class="text-gray-600 text-sm text-center mb-4">创建结构化思维导图，整理思路和知识框架</p>
+                <a href="#" class="block w-full py-2 text-center bg-navprimary text-white rounded-lg hover:bg-navprimary/90 transition-colors text-sm font-medium">
+                    开始使用
+                </a>
+            </div>
+            
+            <!-- 工具 8 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 tool-card-hover">
+                <div class="tool-icon-container bg-orange-100 text-orange-500">
+                    <i class="fa fa-calendar-check-o text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-center mb-2">复习周期提醒</h3>
+                <p class="text-gray-600 text-sm text-center mb-4">基于记忆曲线，智能提醒最佳复习时间点</p>
+                <a href="#" class="block w-full py-2 text-center bg-navprimary text-white rounded-lg hover:bg-navprimary/90 transition-colors text-sm font-medium">
+                    开始使用
+                </a>
+            </div>
+        </div>
+        
+        <!-- 工具使用指南 -->
+        <div class="mt-16 bg-white rounded-xl shadow-sm p-8">
+            <h2 class="text-2xl font-bold text-center mb-8">小工具使用指南</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="text-lg font-bold mb-4 flex items-center">
+                        <i class="fa fa-question-circle text-navprimary mr-2"></i> 如何选择合适的工具？
+                    </h3>
+                    <p class="text-gray-600 text-sm mb-4">根据您的学习需求选择相应类别的工具。如果您是教师需要增加课堂互动，可以使用"课堂问答点名器"或"学生分组器"；如果您在准备论文，可以使用"文献引用管理器"；如果您想研究历史，可以使用"人类历史时间轴"。</p>
+                    <p class="text-gray-600 text-sm">所有工具都可以免费使用，无需注册。对于需要保存数据的工具，建议创建账号以便跨设备访问您的信息。</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4 flex items-center">
+                        <i class="fa fa-lightbulb-o text-accent mr-2"></i> 工具使用技巧
+                    </h3>
+                    <p class="text-gray-600 text-sm mb-4">大多数工具支持数据导出功能，您可以将分析结果导出为PDF或Excel格式。部分工具之间可以协同工作，例如"学习计划制定器"可以与"复习周期提醒"联动。</p>
+                    <p class="text-gray-600 text-sm">我们会定期更新工具功能，您可以关注我们的公众号获取最新信息和使用教程。</p>
+                </div>
+            </div>
+            
+            <div class="mt-8 text-center">
+                <a href="#" class="inline-flex items-center text-navprimary font-medium hover:underline">
+                    查看完整工具使用手册 <i class="fa fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-dark text-white mt-20 py-12">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <i class="fa fa-graduation-cap text-white text-2xl mr-2"></i>
+                        <h3 class="text-lg font-bold">鹏博课堂</h3>
+                    </div>
+                    <p class="text-gray-400 text-sm">致力于提供高质量的教育内容，帮助每个人拓展知识视野，提升自我。</p>
+                </div>
+                
+                <div>
+                    <h4 class="text-md font-bold mb-4">快速链接</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><a href="index.html" class="hover:text-white transition-colors">首页</a></li>
+                        <li><a href="courses.html" class="hover:text-white transition-colors">课程</a></li>
+                        <li><a href="articles.html" class="hover:text-white transition-colors">文章</a></li>
+                        <li><a href="tools.html" class="hover:text-white transition-colors">小工具</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-md font-bold mb-4">联系我们</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li class="flex items-center"><i class="fa fa-envelope-o mr-2"></i> contact@pengbo.com</li>
+                        <li class="flex items-center"><i class="fa fa-phone mr-2"></i> +86 123 4567 8910</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-md font-bold mb-4">关注我们</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fa fa-weixin text-xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fa fa-weibo text-xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fa fa-youtube-play text-xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fa fa-linkedin text-xl"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-500 text-sm">
+                <p>© 2025 鹏博课堂 Dr. PengWang Academy. 保留所有权利。</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 移动端菜单切换
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // 导航栏滚动效果
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 10) {
+                header.classList.add('shadow');
+                header.classList.remove('shadow-sm');
+            } else {
+                header.classList.remove('shadow');
+                header.classList.add('shadow-sm');
+            }
+        });
+        
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                    
+                    // 关闭移动菜单（如果打开）
+                    if (!mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+    

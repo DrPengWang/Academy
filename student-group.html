@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学生分组器 - 鹏博课堂</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navprimary: '#165DFF', // 导航栏主色，与主页保持一致
+                        primary: '#3B82F6',
+                        secondary: '#10B981',
+                        accent: '#F59E0B',
+                        dark: '#1E293B',
+                        light: '#F8FAFC'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .btn-hover {
+                @apply transition-all duration-300 hover:shadow-lg transform hover:-translate-y-0.5;
+            }
+            .group-card {
+                @apply bg-white rounded-xl shadow-sm p-4 mb-4 border-l-4;
+            }
+            .student-tag {
+                @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium mr-1 mb-1;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+    <!-- 导航栏 - 与其他页面保持一致，当前高亮"小工具"选项 -->
+    <header class="sticky top-0 z-50 bg-white shadow-sm transition-all duration-300">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo 和名称 -->
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <i class="fa fa-graduation-cap text-navprimary text-3xl mr-3"></i>
+                        <div>
+                            <h1 class="text-xl font-bold text-navprimary">鹏博课堂</h1>
+                            <p class="text-xs text-gray-500">Dr. PengWang Academy</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 导航链接 - 桌面版 -->
+                <nav class="hidden md:block">
+                    <ul class="flex space-x-8">
+                        <li><a href="index.html" class="text-gray-600 hover:text-navprimary transition-colors">首页</a></li>
+                        <li><a href="courses.html" class="text-gray-600 hover:text-navprimary transition-colors">课程</a></li>
+                        <li><a href="articles.html" class="text-gray-600 hover:text-navprimary transition-colors">文章</a></li>
+                        <li><a href="tools.html" class="text-navprimary font-medium hover:text-navprimary/80 transition-colors">小工具</a></li>
+                        <li><a href="index.html#about" class="text-gray-600 hover:text-navprimary transition-colors">关于我们</a></li>
+                    </ul>
+                </nav>
+                
+                <!-- 移动端菜单按钮 -->
+                <div class="md:hidden">
+                    <button type="button" class="text-gray-500 hover:text-navprimary" id="mobile-menu-button">
+                        <i class="fa fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 移动端导航菜单 -->
+        <div class="md:hidden hidden bg-white shadow-md" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="index.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-navprimary hover:bg-navprimary/5 rounded-md">首页</a>
+                <a href="courses.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-navprimary hover:bg-navprimary/5 rounded-md">课程</a>
+                <a href="articles.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-navprimary hover:bg-navprimary/5 rounded-md">文章</a>
+                <a href="tools.html" class="block px-3 py-2 text-base font-medium text-navprimary bg-navprimary/5 rounded-md">小工具</a>
+                <a href="index.html#about" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-navprimary hover:bg-navprimary/5 rounded-md">关于我们</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 工具标题区域 -->
+    <div class="bg-white border-b border-gray-200 py-6">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold text-dark">学生分组器</h1>
+                    <p class="mt-1 text-gray-600">根据专业和性别智能混合分组，促进多样化团队协作</p>
+                </div>
+                <div class="mt-4 md:mt-0">
+                    <a href="tools.html" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-navprimary hover:bg-navprimary/90">
+                        <i class="fa fa-arrow-left mr-2"></i> 返回工具列表
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主要内容区域 -->
+    <main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- 左侧：工具操作区 -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+                    <h2 class="text-xl font-bold text-dark mb-6 flex items-center">
+                        <i class="fa fa-cogs text-navprimary mr-2"></i> 分组设置
+                    </h2>
+                    
+                    <!-- 上传学生名单 -->
+                    <div class="mb-8">
+                        <h3 class="text-lg font-medium text-gray-800 mb-4">上传学生名单</h3>
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-navprimary transition-colors cursor-pointer" id="file-drop-area">
+                            <input type="file" id="file-input" class="hidden" accept=".txt,.csv,.xlsx,.xls">
+                            <i class="fa fa-cloud-upload text-4xl text-gray-400 mb-3"></i>
+                            <p class="text-gray-600 mb-2">拖放文件到此处，或点击选择文件</p>
+                            <p class="text-gray-400 text-sm">支持格式：TXT, CSV, Excel</p>
+                            <p class="text-gray-400 text-sm mt-2">格式要求：包含姓名、专业、性别三列信息</p>
+                        </div>
+                        
+                        <!-- 已上传文件信息 -->
+                        <div id="file-info" class="hidden mt-4 p-4 bg-gray-50 rounded-lg">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <i class="fa fa-file-text-o text-navprimary mr-2"></i>
+                                    <span id="file-name" class="text-gray-800"></span>
+                                </div>
+                                <button id="remove-file" class="text-red-500 hover:text-red-700">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 手动添加学生 -->
+                    <div class="mb-8">
+                        <h3 class="text-lg font-medium text-gray-800 mb-4">或手动添加学生</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label for="student-name" class="block text-sm font-medium text-gray-700 mb-1">姓名</label>
+                                <input type="text" id="student-name" placeholder="输入姓名" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-navprimary focus:border-navprimary">
+                            </div>
+                            <div>
+                                <label for="student-major" class="block text-sm font-medium text-gray-700 mb-1">专业</label>
+                                <input type="text" id="student-major" placeholder="输入专业" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-navprimary focus:border-navprimary">
+                            </div>
+                            <div>
+                                <label for="student-gender" class="block text-sm font-medium text-gray-700 mb-1">性别</label>
+                                <select id="student-gender" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-navprimary focus:border-navprimary">
+                                    <option value="男">男</option>
+                                    <option value="女">女</option>
+                                    <option value="其他">其他</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mt-3 text-right">
+                            <button id="add-student" class="px-4 py-2 bg-navprimary text-white rounded-lg hover:bg-navprimary/90 transition-colors">
+                                添加学生
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 分组参数设置 -->
+                    <div class="mb-6">
+                        <h3 class="text-lg font-medium text-gray-800 mb-4">分组参数</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="group-size" class="block text-sm font-medium text-gray-700 mb-1">每组人数</label>
+                                <input type="number" id="group-size" min="1" value="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-navprimary focus:border-navprimary">
+                            </div>
+                            <div>
+                                <label for="grouping-priority" class="block text-sm font-medium text-gray-700 mb-1">分组优先级</label>
+                                <select id="grouping-priority" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-navprimary focus:border-navprimary">
+                                    <option value="major">优先平衡专业</option>
+                                    <option value="gender">优先平衡性别</option>
+                                    <option value="equal">两者同等重要</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 分组按钮 -->
+                    <div class="text-center">
+                        <button id="generate-groups" class="px-8 py-3 bg-accent text-white rounded-lg text-lg font-medium btn-hover disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            <i class="fa fa-random mr-2"></i> 生成分组
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 分组结果 -->
+                <div class="bg-white rounded-xl shadow-sm p-6 hidden" id="groups-result">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold text-dark flex items-center">
+                            <i class="fa fa-users text-navprimary mr-2"></i> 分组结果
+                        </h2>
+                        <button id="download-result" class="px-4 py-2 bg-navprimary text-white rounded-lg hover:bg-navprimary/90 transition-colors text-sm">
+                            <i class="fa fa-download mr-1"></i> 导出结果
+                        </button>
+                    </div>
+                    
+                    <div id="groups-container" class="space-y-6">
+                        <!-- 分组结果将在这里动态生成 -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 右侧：学生列表和使用说明 -->
+            <div class="lg:col-span-1">
+                <!-- 学生名单预览 -->
+                <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+                    <h2 class="text-xl font-bold text-dark mb-4 flex items-center">
+                        <i class="fa fa-list text-navprimary mr-2"></i> 学生名单
+                    </h2>
+                    
+                    <div id="empty-students-message" class="text-center py-10 text-gray-500">
+                        <i class="fa fa-user-o text-4xl mb-3 opacity-30"></i>
+                        <p>尚未添加学生，请上传名单或手动添加</p>
+                    </div>
+                    
+                    <div id="students-list-container" class="hidden">
+                        <div class="flex justify-between items-center mb-4">
+                            <p class="text-gray-600"><span id="students-count">0</span> 名学生</p>
+                            <button id="clear-students" class="text-sm text-gray-500 hover:text-red-500 transition-colors">
+                                <i class="fa fa-trash-o mr-1"></i> 清空
+                            </button>
+                        </div>
+                        <div class="max-h-60 overflow-y-auto pr-2 text-sm">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead>
+                                    <tr>
+                                        <th class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">姓名</th>
+                                        <th class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">专业</th>
+                                        <th class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">性别</th>
+                                        <th class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="students-table-body" class="divide-y divide-gray-200">
+                                    <!-- 学生数据将在这里动态生成 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 使用说明 -->
+                <div class="bg-white rounded-xl shadow-sm p-6 sticky top-24">
+                    <h2 class="text-xl font-bold text-dark mb-4 flex items-center">
+                        <i class="fa fa-info-circle text-navprimary mr-2"></i> 使用说明
+                    </h2>
+                    
+                    <div class="space-y-4 text-gray-600 text-sm">
+                        <div>
+                            <h3 class="font-medium text-gray-800 mb-2">如何使用分组器？</h3>
+                            <ol class="list-decimal pl-5 space-y-2">
+                                <li>上传包含姓名、专业、性别信息的文件</li>
+                                <li>或手动输入学生信息并添加</li>
+                                <li>设置每组人数和分组优先级</li>
+                                <li>点击"生成分组"按钮获取结果</li>
+                            </ol>
+                        </div>
+                        
+                        <div class="pt-4 border-t border-gray-100">
+                            <h3 class="font-medium text-gray-800 mb-2">文件格式要求</h3>
+                            <ul class="list-disc pl-5 space-y-2">
+                                <li>CSV/TXT文件：使用逗号分隔三列（姓名,专业,性别）</li>
+                                <li>Excel文件：前 three 列应为姓名、专业、性别</li>
+                                <li>第一行可以是标题行（如"姓名,专业,性别"）</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="pt-4 border-t border-gray-100">
+                            <h3 class="font-medium text-gray-800 mb-2">分组原理</h3>
+                            <p>系统会尽量平衡各组的专业和性别比例，避免同一专业或同一性别的学生过度集中在某一组，促进小组多样性和互动性。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 分组成功提示弹窗 -->
+    <div id="success-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 text-center transform transition-all scale-95 opacity-0" id="modal-content">
+            <div class="mb-6">
+                <div class="w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fa fa-check text-2xl text-secondary"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800">分组完成</h3>
+            </div>
+            
+            <div class="mb-8">
+                <p class="text-gray-600" id="grouping-summary">已成功将 24 名学生分为 6 组，每组 4 人</p>
+            </div>
+            
+            <button id="close-modal" class="px-6 py-2 bg-navprimary text-white rounded-lg hover:bg-navprimary/90 transition-colors w-full">
+                查看分组结果
+            </button>
+        </div>
+    </div>
+
+    <footer class="bg-dark text-white mt-16 py-12">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <i class="fa fa-graduation-cap text-white text-2xl mr-2"></i>
+                        <h3 class="text-lg font-bold">鹏博课堂</h3>
+                    </div>
+                    <p class="text-gray-400 text-sm">致力于提供高质量的教育内容，帮助每个人拓展知识视野，提升自我。</p>
+                </div>
+                
+                <div>
+                    <h4 class="text-md font-bold mb-4">快速链接</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><a href="index.html" class="hover:text-white transition-colors">首页</a></li>
+                        <li><a href="courses.html" class="hover:text-white transition-colors">课程</a></li>
+                        <li><a href="articles.html" class="hover:text-white transition-colors">文章</a></li>
+                        <li><a href="tools.html" class="hover:text-white transition-colors">小工具</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-md font-bold mb-4">联系我们</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li class="flex items-center"><i class="fa fa-envelope-o mr-2"></i> contact@pengbo.com</li>
+                        <li class="flex items-center"><i class="fa fa-phone mr-2"></i> +86 123 4567 8910</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-md font-bold mb-4">关注我们</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fa fa-weixin text-xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fa fa-weibo text-xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fa fa-youtube-play text-xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fa fa-linkedin text-xl"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-500 text-sm">
+                <p>© 2025 鹏博课堂 Dr. PengWang Academy. 保留所有权利。</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 存储学生数据
+        let students = [];
+        // 生成的分组
+        let groups = [];
+        
+        // DOM 元素
+        const fileDropArea = document.getElementById('file-drop-area');
+        const fileInput = document.getElementById('file-input');
+        const fileInfo = document.getElementById('file-info');
+        const fileName = document.getElementById('file-name');
+        const removeFile = document.getElementById('remove-file');
+        const studentNameInput = document.getElementById('student-name');
+        const studentMajorInput = document.getElementById('student-major');
+        const studentGenderInput = document.getElementById('student-gender');
+        const addStudentBtn = document.getElementById('add-student');
+        const groupSizeInput = document.getElementById('group-size');
+        const groupingPriorityInput = document.getElementById('grouping-priority');
+        const generateGroupsBtn = document.getElementById('generate-groups');
+        const emptyStudentsMessage = document.getElementById('empty-students-message');
+        const studentsListContainer = document.getElementById('students-list-container');
+        const studentsCount = document.getElementById('students-count');
+        const studentsTableBody = document.getElementById('students-table-body');
+        const clearStudentsBtn = document.getElementById('clear-students');
+        const groupsResult = document.getElementById('groups-result');
+        const groupsContainer = document.getElementById('groups-container');
+        const downloadResultBtn = document.getElementById('download-result');
+        const successModal = document.getElementById('success-modal');
+        const modalContent = document.getElementById('modal-content');
+        const groupingSummary = document.getElementById('grouping-summary');
+        const closeModalBtn = document.getElementById('close-modal');
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        // 移动端菜单切换
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // 文件上传区域点击触发文件选择
+        fileDropArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        // 阻止拖放默认行为
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            fileDropArea.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        // 高亮拖放区域
+        ['dragenter', 'dragover'].forEach(eventName => {
+            fileDropArea.addEventListener(eventName, highlight, false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            fileDropArea.addEventListener(eventName, unhighlight, false);
+        });
+        
+        function highlight() {
+            fileDropArea.classList.add('border-navprimary');
+            fileDropArea.classList.add('bg-navprimary/5');
+        }
+        
+        function unhighlight() {
+            fileDropArea.classList.remove('border-navprimary');
+            fileDropArea.classList.remove('bg-navprimary/5');
+        }
+        
+        // 处理文件上传
+        fileDropArea.addEventListener('drop', handleDrop, false);
+        
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const file = dt.files[0];
+            handleFiles(file);
+        }
+        
+        // 处理选择的文件
+        fileInput.addEventListener('change', function() {
+            if (this.files.length) {
+                handleFiles(this.files[0]);
+            }
+        });
+        
+        // 处理文件内容
+        function handleFiles(file) {
+            // 显示文件信息
+            fileName.textContent = file.name;
+            fileInfo.classList.remove('hidden');
+            
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                const content = e.target.result;
+                let newStudents = [];
+                
+                // 根据文件类型解析内容
+                if (file.name.endsWith('.txt') || file.name.endsWith('.csv')) {
+                    // 按行分割
+                    const lines = content.split(/\r\n|\n/);
+                    
+                    // 检查第一行是否为标题行
+                    let startIndex = 0;
+                    const firstLine = lines[0].toLowerCase();
+                    if (firstLine.includes('姓名') || firstLine.includes('专业') || firstLine.includes('性别')) {
+                        startIndex = 1; // 跳过标题行
+                    }
+                    
+                    // 解析每一行
+                    for (let i = startIndex; i < lines.length; i++) {
+                        const line = lines[i].trim();
+                        if (line) {
+                            // 分割列（支持逗号或制表符分隔）
+                            const columns = line.split(/[,，\t]/).map(col => col.trim());
+                            
+                            if (columns.length >= 3) {
+                                newStudents.push({
+                                    id: Date.now() + i, // 生成唯一ID
+                                    name: columns[0],
+                                    major: columns[1],
+                                    gender: columns[2]
+                                });
+                            }
+                        }
+                    }
+                } else if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
+                    // Excel文件处理提示
+                    alert('Excel文件解析功能即将上线，目前请使用TXT或CSV格式，格式为：姓名,专业,性别');
+                    return;
+                }
+                
+                // 添加学生（去重）
+                newStudents.forEach(student => {
+                    const exists = students.some(s => 
+                        s.name === student.name && 
+                        s.major === student.major && 
+                        s.gender === student.gender
+                    );
+                    
+                    if (!exists) {
+                        students.push(student);
+                    }
+                });
+                
+                updateStudentsList();
+            };
+            
+            // 读取文本文件
+            if (file.name.endsWith('.txt') || file.name.endsWith('.csv')) {
+                reader.readAsText(file);
+            }
+        }
+        
+        // 移除已上传的文件
+        removeFile.addEventListener('click', () => {
+            fileInput.value = '';
+            fileInfo.classList.add('hidden');
+        });
+        
+        // 手动添加学生
+        addStudentBtn.addEventListener('click', addStudent);
+        
+        function addStudent() {
+            const name = studentNameInput.value.trim();
+            const major = studentMajorInput.value.trim();
+            
+            if (name && major) {
+                const gender = studentGenderInput.value;
+                
+                // 检查是否已存在
+                const exists = students.some(s => 
+                    s.name === name && 
+                    s.major === major && 
+                    s.gender === gender
+                );
+                
+                if (!exists) {
+                    students.push({
+                        id: Date.now(),
+                        name,
+                        major,
+                        gender
+                    });
+                    
+                    updateStudentsList();
+                    
+                    // 清空输入框
+                    studentNameInput.value = '';
+                    studentMajorInput.value = '';
+                    
+                    // 聚焦到姓名输入框
+                    studentNameInput.focus();
+                } else {
+                    alert('该学生信息已存在');
+                }
+            } else {
+                alert('请输入姓名和专业信息');
+            }
+        }
+        
+        // 清空学生名单
+        clearStudentsBtn.addEventListener('click', () => {
+            if (students.length > 0 && confirm('确定要清空所有学生信息吗？')) {
+                students = [];
+                updateStudentsList();
+            }
+        });
+        
+        // 删除单个学生
+        function deleteStudent(id) {
+            students = students.filter(student => student.id !== id);
+            updateStudentsList();
+        }
+        
+        // 更新学生列表显示
+        function updateStudentsList() {
+            // 清空现有列表
+            studentsTableBody.innerHTML = '';
+            
+            // 更新计数
+            studentsCount.textContent = students.length;
+            
+            // 显示或隐藏列表
+            if (students.length === 0) {
+                emptyStudentsMessage.classList.remove('hidden');
+                studentsListContainer.classList.add('hidden');
+                generateGroupsBtn.disabled = true;
+                groupsResult.classList.add('hidden');
+            } else {
+                emptyStudentsMessage.classList.add('hidden');
+                studentsListContainer.classList.remove('hidden');
+                generateGroupsBtn.disabled = false;
+                
+                // 添加学生到表格
+                students.forEach(student => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="px-2 py-2 whitespace-nowrap">${student.name}</td>
+                        <td class="px-2 py-2 whitespace-nowrap">${student.major}</td>
+                        <td class="px-2 py-2 whitespace-nowrap">${student.gender}</td>
+                        <td class="px-2 py-2 whitespace-nowrap">
+                            <button class="text-red-500 hover:text-red-700 text-xs" data-id="${student.id}">
+                                <i class="fa fa-times"></i>
+                            </button>
+                        </td>
+                    `;
+                    studentsTableBody.appendChild(row);
+                    
+                    // 添加删除事件
+                    row.querySelector('button').addEventListener('click', (e) => {
+                        const id = parseInt(e.target.closest('button').dataset.id);
+                        deleteStudent(id);
+                    });
+                });
+            }
+        }
+        
+        // 生成分组
+        generateGroupsBtn.addEventListener('click', () => {
+            const groupSize = parseInt(groupSizeInput.value);
+            const priority = groupingPriorityInput.value;
+            
+            if (isNaN(groupSize) || groupSize < 1) {
+                alert('请输入有效的每组人数');
+                return;
+            }
+            
+            if (students.length < groupSize) {
+                alert('学生总数少于每组人数，请调整每组人数');
+                return;
+            }
+            
+            // 执行分组算法
+            groups = generateMixedGroups(students, groupSize, priority);
+            
+            // 显示成功弹窗
+            const groupCount = groups.length;
+            groupingSummary.textContent = `已成功将 ${students.length} 名学生分为 ${groupCount} 组，每组约 ${groupSize} 人`;
+            successModal.classList.remove('hidden');
+            
+            // 触发弹窗动画
+            setTimeout(() => {
+                modalContent.classList.remove('scale-95', 'opacity-0');
+                modalContent.classList.add('scale-100', 'opacity-100', 'transition-all', 'duration-300');
+            }, 10);
+        });
+        
+        // 关闭弹窗并显示分组结果
+        closeModalBtn.addEventListener('click', () => {
+            modalContent.classList.remove('scale-100', 'opacity-100');
+            modalContent.classList.add('scale-95', 'opacity-0', 'transition-all', 'duration-300');
+            
+            setTimeout(() => {
+                successModal.classList.add('hidden');
+                displayGroups();
+                // 滚动到分组结果
+                groupsResult.scrollIntoView({ behavior: 'smooth' });
+            }, 300);
+        });
+        
+        // 显示分组结果
+        function displayGroups() {
+            groupsContainer.innerHTML = '';
+            
+            groups.forEach((group, index) => {
+                // 为每组生成不同的左侧边框颜色
+                const colors = [
+                    'border-navprimary bg-navprimary/5',
+                    'border-secondary bg-secondary/5',
+                    'border-accent bg-accent/5',
+                    'border-purple-500 bg-purple-500/5',
+                    'border-red-500 bg-red-500/5',
+                    'border-indigo-500 bg-indigo-500/5'
+                ];
+                const colorClass = colors[index % colors.length];
+                
+                // 创建专业和性别统计
+                const majorStats = {};
+                const genderStats = {};
+                
+                group.forEach(student => {
+                    // 统计专业
+                    if (majorStats[student.major]) {
+                        majorStats[student.major]++;
+                    } else {
+                        majorStats[student.major] = 1;
+                    }
+                    
+                    // 统计性别
+                    if (genderStats[student.gender]) {
+                        genderStats[student.gender]++;
+                    } else {
+                        genderStats[student.gender] = 1;
+                    }
+                });
+                
+                // 创建分组卡片
+                const groupCard = document.createElement('div');
+                groupCard.className = `group-card ${colorClass}`;
+                groupCard.innerHTML = `
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="font-bold text-lg">第 ${index + 1} 组 <span class="text-sm font-normal text-gray-500">(${group.length}人)</span></h3>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="text-sm text-gray-600 mb-1">专业分布：</div>
+                        <div class="flex flex-wrap">
+                            ${Object.entries(majorStats).map(([major, count]) => 
+                                `<span class="student-tag bg-blue-100 text-blue-800">${major}: ${count}</span>`
+                            ).join('')}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="text-sm text-gray-600 mb-1">性别分布：</div>
+                        <div class="flex flex-wrap">
+                            ${Object.entries(genderStats).map(([gender, count]) => 
+                                `<span class="student-tag bg-pink-100 text-pink-800">${gender}: ${count}</span>`
+                            ).join('')}
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div class="text-sm text-gray-600 mb-1">成员：</div>
+                        <ul class="list-disc list-inside text-sm space-y-1">
+                            ${group.map(student => `<li>${student.name}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+                
+                groupsContainer.appendChild(groupCard);
+            });
+            
+            // 显示分组结果区域
+            groupsResult.classList.remove('hidden');
+        }
+        
+        // 下载分组结果
+        downloadResultBtn.addEventListener('click', () => {
+            let csvContent = "组号,姓名,专业,性别\n";
+            
+            groups.forEach((group, groupIndex) => {
+                group.forEach(student => {
+                    csvContent += `${groupIndex + 1},${student.name},${student.major},${student.gender}\n`;
+                });
+            });
+            
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.setAttribute('href', url);
+            link.setAttribute('download', `学生分组结果_${new Date().toLocaleDateString()}.csv`);
+            link.style.visibility = 'hidden';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+        
+        // 智能混合分组算法
+        function generateMixedGroups(students, groupSize, priority) {
+            // 创建学生副本以避免修改原始数据
+            const shuffledStudents = [...students];
+            
+            // 首先随机打乱学生顺序
+            for (let i = shuffledStudents.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffledStudents[i], shuffledStudents[j]] = [shuffledStudents[j], shuffledStudents[i]];
+            }
+            
+            // 根据优先级排序学生，以便更好地混合
+            if (priority === 'major') {
+                // 优先按专业排序，使相同专业的学生分散
+                shuffledStudents.sort((a, b) => {
+                    if (a.major !== b.major) {
+                        return a.major.localeCompare(b.major);
+                    }
+                    return a.gender.localeCompare(b.gender);
+                });
+            } else if (priority === 'gender') {
+                // 优先按性别排序，使相同性别的学生分散
+                shuffledStudents.sort((a, b) => {
+                    if (a.gender !== b.gender) {
+                        return a.gender.localeCompare(b.gender);
+                    }
+                    return a.major.localeCompare(b.major);
+                });
+            } else {
+                // 两者同等重要，交替排序
+                shuffledStudents.sort((a, b) => {
+                    const majorDiff = a.major.localeCompare(b.major);
+                    const genderDiff = a.gender.localeCompare(b.gender);
+                    return majorDiff + genderDiff;
+                });
+            }
+            
+            // 创建分组
+            const groups = [];
+            const totalGroups = Math.ceil(shuffledStudents.length / groupSize);
+            
+            // 初始化空组
+            for (let i = 0; i < totalGroups; i++) {
+                groups.push([]);
+            }
+            
+            // 按顺序将学生分配到各组，确保均匀分布
+            shuffledStudents.forEach((student, index) => {
+                const groupIndex = index % totalGroups;
+                groups[groupIndex].push(student);
+            });
+            
+            return groups;
+        }
+        
+        // 初始化页面
+        updateStudentsList();
+    </script>
+</body>
+</html>
+    

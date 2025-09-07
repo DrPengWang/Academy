@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>投资回报计算器 - 鹏博课堂</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navprimary: '#165DFF', // 导航栏主色，与主页保持一致
+                        primary: '#3B82F6',
+                        secondary: '#10B981',
+                        accent: '#F59E0B',
+                        dark: '#1E293B',
+                        light: '#F8FAFC'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .input-focus {
+                @apply focus:ring-2 focus:ring-navprimary/50 focus:border-navprimary transition-all;
+            }
+            .result-highlight {
+                @apply bg-emerald-50 border-l-4 border-emerald-500 p-4 rounded-r;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- 导航栏 - 与其他页面保持一致 -->
+    <header class="sticky top-0 z-50 bg-white shadow-sm transition-all duration-300">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo 和名称 -->
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <i class="fa fa-graduation-cap text-navprimary text-3xl mr-3"></i>
+                        <div>
+                            <h1 class="text-xl font-bold text-navprimary">鹏博课堂</h1>
+                            <p class="text-xs text-gray-500">Dr. PengWang Academy</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 导航链接 - 桌面版 -->
+                <nav class="hidden md:block">
+                    <ul class="flex space-x-8">
+                        <li><a href="index.html" class="text-gray-600 hover:text-navprimary transition-colors">首页</a></li>
+                        <li><a href="courses.html" class="text-gray-600 hover:text-navprimary transition-colors">课程</a></li>
+                        <li><a href="articles.html" class="text-gray-600 hover:text-navprimary transition-colors">文章</a></li>
+                        <li><a href="tools.html" class="text-navprimary font-medium hover:text-navprimary/80 transition-colors">小工具</a></li>
+                        <li><a href="index.html#about" class="text-gray-600 hover:text-navprimary transition-colors">关于我们</a></li>
+                    </ul>
+                </nav>
+                
+                <!-- 移动端菜单按钮 -->
+                <div class="md:hidden">
+                    <button type="button" class="text-gray-500 hover:text-navprimary" id="mobile-menu-button">
+                        <i class="fa fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 移动端导航菜单 -->
+        <div class="md:hidden hidden bg-white shadow-md" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="index.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-navprimary hover:bg-navprimary/5 rounded-md">首页</a>
+                <a href="courses.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-navprimary hover:bg-navprimary/5 rounded-md">课程</a>
+                <a href="articles.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-navprimary hover:bg-navprimary/5 rounded-md">文章</a>
+                <a href="tools.html" class="block px-3 py-2 text-base font-medium text-navprimary bg-navprimary/5 rounded-md">小工具</a>
+                <a href="index.html#about" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-navprimary hover:bg-navprimary/5 rounded-md">关于我们</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- 页面标题 -->
+        <div class="text-center mb-12">
+            <h1 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-dark mb-3">投资回报计算器</h1>
+            <p class="text-gray-600 max-w-2xl mx-auto">通过这个工具，您可以计算不同投资方案的预期回报，帮助您做出更明智的投资决策</p>
+        </div>
+        
+        <!-- 主要内容区 -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- 计算器表单 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 lg:p-8">
+                <h2 class="text-xl font-bold text-dark mb-6 flex items-center">
+                    <i class="fa fa-calculator text-emerald-600 mr-2"></i> 投资参数设置
+                </h2>
+                
+                <form id="roi-calculator" class="space-y-6">
+                    <!-- 初始投资金额 -->
+                    <div>
+                        <label for="initial-investment" class="block text-sm font-medium text-gray-700 mb-1">初始投资金额（元）</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fa fa-yen text-gray-400"></i>
+                            </div>
+                            <input type="number" id="initial-investment" name="initial-investment" min="0" step="100" value="10000" 
+                                class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg input-focus" required>
+                        </div>
+                    </div>
+                    
+                    <!-- 投资年限 -->
+                    <div>
+                        <label for="investment-years" class="block text-sm font-medium text-gray-700 mb-1">投资年限（年）</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fa fa-calendar text-gray-400"></i>
+                            </div>
+                            <input type="number" id="investment-years" name="investment-years" min="1" max="50" step="1" value="10" 
+                                class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg input-focus" required>
+                        </div>
+                    </div>
+                    
+                    <!-- 预期年回报率 -->
+                    <div>
+                        <label for="annual-return-rate" class="block text-sm font-medium text-gray-700 mb-1">预期年回报率（%）</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fa fa-percent text-gray-400"></i>
+                            </div>
+                            <input type="number" id="annual-return-rate" name="annual-return-rate" min="0" max="100" step="0.1" value="8" 
+                                class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg input-focus" required>
+                        </div>
+                        <div class="mt-1">
+                            <input type="range" id="return-rate-slider" min="0" max="20" step="0.1" value="8"
+                                class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                        </div>
+                    </div>
+                    
+                    <!-- 年度追加投资 -->
+                    <div>
+                        <div class="flex items-center justify-between mb-1">
+                            <label for="annual-contribution" class="block text-sm font-medium text-gray-700">年度追加投资（元）</label>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="enable-contribution" name="enable-contribution" 
+                                    class="h-4 w-4 text-navprimary border-gray-300 rounded focus:ring-navprimary">
+                                <label for="enable-contribution" class="ml-2 block text-sm text-gray-600">启用</label>
+                            </div>
+                        </div>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fa fa-plus-circle text-gray-400"></i>
+                            </div>
+                            <input type="number" id="annual-contribution" name="annual-contribution" min="0" step="100" value="0" disabled
+                                class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg input-focus bg-gray-50">
+                        </div>
+                    </div>
+                    
+                    <!-- 计算按钮 -->
+                    <div class="pt-4">
+                        <button type="submit" class="w-full py-3 bg-navprimary text-white rounded-lg hover:bg-navprimary/90 transition-colors text-base font-medium flex items-center justify-center">
+                            <i class="fa fa-calculator mr-2"></i> 计算投资回报
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- 计算结果和图表 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 lg:p-8">
+                <h2 class="text-xl font-bold text-dark mb-6 flex items-center">
+                    <i class="fa fa-line-chart text-emerald-600 mr-2"></i> 计算结果
+                </h2>
+                
+                <!-- 结果展示区 -->
+                <div class="result-highlight mb-6 opacity-0 transition-opacity duration-300" id="result-container">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-sm text-gray-600 mb-1">初始投资</p>
+                            <p class="text-lg font-bold text-dark" id="result-initial">¥0</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600 mb-1">最终价值</p>
+                            <p class="text-lg font-bold text-emerald-600" id="result-final">¥0</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600 mb-1">总收益</p>
+                            <p class="text-lg font-bold text-emerald-600" id="result-profit">¥0</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600 mb-1">投资回报率</p>
+                            <p class="text-lg font-bold text-emerald-600" id="result-roi">0%</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 图表展示区 -->
+                <div class="h-64 mb-6">
+                    <canvas id="investment-chart"></canvas>
+                </div>
+                
+                <!-- 投资建议 -->
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r mt-6">
+                    <h3 class="text-md font-bold text-blue-700 mb-2 flex items-center">
+                        <i class="fa fa-lightbulb-o mr-2"></i> 投资建议
+                    </h3>
+                    <p class="text-sm text-blue-700" id="investment-advice">
+                        请输入投资参数并点击计算按钮，获取个性化投资建议。
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 使用说明 -->
+        <div class="mt-12 bg-white rounded-xl shadow-sm p-6 lg:p-8">
+            <h2 class="text-xl font-bold text-dark mb-6 flex items-center">
+                <i class="fa fa-question-circle text-navprimary mr-2"></i> 如何使用投资回报计算器
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="text-lg font-bold mb-4">计算器使用步骤</h3>
+                    <ol class="list-decimal list-inside space-y-2 text-gray-600">
+                        <li>输入您的初始投资金额（以元为单位）</li>
+                        <li>选择您计划的投资年限</li>
+                        <li>设置预期的年回报率（可以使用滑块或直接输入）</li>
+                        <li>（可选）启用并设置年度追加投资金额</li>
+                        <li>点击"计算投资回报"按钮获取结果</li>
+                    </ol>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-bold mb-4">注意事项</h3>
+                    <ul class="list-disc list-inside space-y-2 text-gray-600">
+                        <li>本计算器仅供参考，不构成投资建议</li>
+                        <li>实际投资回报可能受到市场波动、通货膨胀等多种因素影响</li>
+                        <li>计算结果基于复利计算公式</li>
+                        <li>建议您咨询专业投资顾问获取个性化建议</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-dark text-white mt-20 py-12">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <i class="fa fa-graduation-cap text-white text-2xl mr-2"></i>
+                        <h3 class="text-lg font-bold">鹏博课堂</h3>
+                    </div>
+                    <p class="text-gray-400 text-sm">致力于提供高质量的教育内容，帮助每个人拓展知识视野，提升自我。</p>
+                </div>
+                
+                <div>
+                    <h4 class="text-md font-bold mb-4">快速链接</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><a href="index.html" class="hover:text-white transition-colors">首页</a></li>
+                        <li><a href="courses.html" class="hover:text-white transition-colors">课程</a></li>
+                        <li><a href="articles.html" class="hover:text-white transition-colors">文章</a></li>
+                        <li><a href="tools.html" class="hover:text-white transition-colors">小工具</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-md font-bold mb-4">联系我们</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li class="flex items-center"><i class="fa fa-envelope-o mr-2"></i> contact@pengbo.com</li>
+                        <li class="flex items-center"><i class="fa fa-phone mr-2"></i> +86 123 4567 8910</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-md font-bold mb-4">关注我们</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fa fa-weixin text-xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fa fa-weibo text-xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fa fa-youtube-play text-xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fa fa-linkedin text-xl"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-500 text-sm">
+                <p>© 2025 鹏博课堂 Dr. PengWang Academy. 保留所有权利。</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 移动端菜单切换
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // 年度追加投资复选框
+        const enableContribution = document.getElementById('enable-contribution');
+        const annualContribution = document.getElementById('annual-contribution');
+        
+        enableContribution.addEventListener('change', () => {
+            annualContribution.disabled = !enableContribution.checked;
+            annualContribution.classList.toggle('bg-gray-50', !enableContribution.checked);
+        });
+        
+        // 回报率滑块
+        const returnRateSlider = document.getElementById('return-rate-slider');
+        const annualReturnRate = document.getElementById('annual-return-rate');
+        
+        returnRateSlider.addEventListener('input', () => {
+            annualReturnRate.value = returnRateSlider.value;
+        });
+        
+        annualReturnRate.addEventListener('input', () => {
+            if (parseFloat(annualReturnRate.value) <= 20) {
+                returnRateSlider.value = annualReturnRate.value;
+            }
+        });
+        
+        // 计算器表单提交
+        const roiCalculator = document.getElementById('roi-calculator');
+        
+        roiCalculator.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // 获取表单数据
+            const initialInvestment = parseFloat(document.getElementById('initial-investment').value);
+            const investmentYears = parseInt(document.getElementById('investment-years').value);
+            const annualReturnRate = parseFloat(document.getElementById('annual-return-rate').value);
+            const enableContribution = document.getElementById('enable-contribution').checked;
+            const annualContribution = enableContribution ? parseFloat(document.getElementById('annual-contribution').value) : 0;
+            
+            // 计算投资回报
+            const { finalValue, totalProfit, roiPercentage, yearlyData } = calculateInvestmentReturn(
+                initialInvestment,
+                investmentYears,
+                annualReturnRate,
+                annualContribution
+            );
+            
+            // 显示结果
+            const resultContainer = document.getElementById('result-container');
+            document.getElementById('result-initial').textContent = formatCurrency(initialInvestment);
+            document.getElementById('result-final').textContent = formatCurrency(finalValue);
+            document.getElementById('result-profit').textContent = formatCurrency(totalProfit);
+            document.getElementById('result-roi').textContent = `${roiPercentage.toFixed(2)}%`;
+            
+            // 显示结果容器
+            resultContainer.style.opacity = '1';
+            
+            // 更新图表
+            updateChart(yearlyData);
+            
+            // 更新投资建议
+            updateInvestmentAdvice(roiPercentage, investmentYears);
+        });
+        
+        // 计算投资回报的函数
+        function calculateInvestmentReturn(initial, years, rate, contribution) {
+            let currentValue = initial;
+            const yearlyData = [];
+            
+            // 添加初始年份数据
+            yearlyData.push({ year: 0, value: initial });
+            
+            // 逐年计算
+            for (let i = 1; i <= years; i++) {
+                // 计算当年收益
+                currentValue = currentValue * (1 + rate / 100);
+                
+                // 添加年度追加投资（最后一年不追加）
+                if (i < years && contribution > 0) {
+                    currentValue += contribution;
+                }
+                
+                // 保存当年数据
+                yearlyData.push({ year: i, value: currentValue });
+            }
+            
+            // 计算总收益和回报率
+            const totalProfit = currentValue - initial - (contribution * (years - 1));
+            const roiPercentage = (totalProfit / initial) * 100;
+            
+            return {
+                finalValue: currentValue,
+                totalProfit: totalProfit,
+                roiPercentage: roiPercentage,
+                yearlyData: yearlyData
+            };
+        }
+        
+        // 格式化货币
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('zh-CN', {
+                style: 'currency',
+                currency: 'CNY',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(value);
+        }
+        
+        // 初始化图表
+        let investmentChart = null;
+        
+        function updateChart(yearlyData) {
+            const ctx = document.getElementById('investment-chart').getContext('2d');
+            
+            // 提取年份和对应的值
+            const years = yearlyData.map(item => `第${item.year}年`);
+            const values = yearlyData.map(item => item.value);
+            
+            // 如果图表已存在，销毁它
+            if (investmentChart) {
+                investmentChart.destroy();
+            }
+            
+            // 创建新图表
+            investmentChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: years,
+                    datasets: [{
+                        label: '投资价值（元）',
+                        data: values,
+                        borderColor: '#10B981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.3,
+                        pointBackgroundColor: '#10B981',
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += formatCurrency(context.parsed.y);
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            ticks: {
+                                callback: function(value) {
+                                    return '¥' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // 更新投资建议
+        function updateInvestmentAdvice(roiPercentage, investmentYears) {
+            const adviceElement = document.getElementById('investment-advice');
+            let advice = '';
+            
+            if (roiPercentage < 50) {
+                advice = '您的预期回报率相对保守，适合风险承受能力较低的投资者。建议适当配置一些低风险产品，如国债、定期存款等。';
+            } else if (roiPercentage < 100) {
+                advice = '您的预期回报率处于中等水平，适合平衡型投资者。建议采用股债平衡的投资策略，分散风险。';
+            } else if (roiPercentage < 200) {
+                advice = '您的预期回报率相对较高，可能需要承担一定风险。建议配置部分成长型资产，但要注意控制仓位。';
+            } else {
+                advice = '您的预期回报率较高，需要承担较大风险。建议在专业人士指导下进行投资，并做好风险管理。';
+            }
+            
+            if (investmentYears > 10) {
+                advice += ' 长期投资有利于平滑市场波动，建议保持投资耐心，避免频繁交易。';
+            }
+            
+            adviceElement.textContent = advice;
+        }
+        
+        // 页面加载完成后初始化图表
+        document.addEventListener('DOMContentLoaded', () => {
+            // 初始化一个空图表
+            const ctx = document.getElementById('investment-chart').getContext('2d');
+            investmentChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['请输入参数'],
+                    datasets: []
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
