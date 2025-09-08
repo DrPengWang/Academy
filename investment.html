@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>证券投资常识 - 鹏博课堂</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navprimary: '#165DFF', // 导航栏主色，与主页保持一致
+                        primary: '#3B82F6',
+                        secondary: '#10B981',
+                        accent: '#F59E0B',
+                        dark: '#1E293B',
+                        light: '#F8FAFC'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .section-divider {
+                @apply border-t border-gray-200 my-12;
+            }
+            .download-button-hover {
+                @apply transition-all duration-300 hover:bg-primary/90 hover:shadow-md;
+            }
+            .material-card-hover {
+                @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- 导航栏 - 与其他页面保持一致 -->
+    <header class="sticky top-0 z-50 bg-white shadow-sm transition-all duration-300">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo 和名称 -->
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <i class="fa fa-graduation-cap text-navprimary text-3xl mr-3"></i>
+                        <div>
+                            <h1 class="text-xl font-bold text-navprimary">鹏博课堂</h1>
+                            <p class="text-xs text-gray-500">Dr. PengWang Academy</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 导航链接 - 桌面版 -->
+                <nav class="hidden md:block">
+                    <ul class="flex space-x-8">
+                        <li><a href="index.html" class="text-gray-600 hover:text-navprimary transition-colors">首页</a></li>
+                        <li><a href="courses.html" class="text-navprimary font-medium hover:text-navprimary/80 transition-colors">课程</a></li>
+                        <li><a href="articles.html" class="text-gray-600 hover:text-navprimary transition-colors">文章</a></li>
+                        <li><a href="tools.html" class="text-gray-600 hover:text-navprimary transition-colors">小工具</a></li>
+                        <li><a href="index.html#about" class="text-gray-600 hover:text-navprimary transition-colors">关于我们</a></li>
+                    </ul>
+                </nav>
+                
+                <!-- 移动端菜单按钮 -->
+                <div class="md:hidden">
+                    <button type="button" class="text-gray-500 hover:text-navprimary" id="mobile-menu-button">
+                        <i class="fa fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 移动端导航菜单 -->
+        <div class="md:hidden hidden bg-white shadow-md" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="index.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-navprimary hover:bg-navprimary/5 rounded-md">首页</a>
+                <a href="courses.html" class="block px-3 py-2 text-base font-medium text-navprimary bg-navprimary/5 rounded-md">课程</a>
+                <a href="articles.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-navprimary hover:bg-navprimary/5 rounded-md">文章</a>
+                <a href="tools.html" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-navprimary hover:bg-navprimary/5 rounded-md">小工具</a>
+                <a href="index.html#about" class="block px-3 py-2 text-base font-medium text-gray-600 hover:text-navprimary hover:bg-navprimary/5 rounded-md">关于我们</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- 课程路径导航 -->
+        <div class="text-sm text-gray-500 mb-6">
+            <a href="index.html" class="hover:text-navprimary">首页</a> &gt; 
+            <a href="courses.html" class="hover:text-navprimary">全部课程</a> &gt; 
+            <span class="text-gray-700">证券投资常识</span>
+        </div>
+        
+        <!-- 课程标题和简介 -->
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- 课程封面图 -->
+            <div class="lg:w-1/3">
+                <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                    <img src="https://picsum.photos/id/180/800/600" alt="证券投资常识课程封面" class="w-full h-auto">
+                    <div class="p-6">
+                        <div class="flex flex-col space-y-4">
+                            <div class="flex items-center">
+                                <div class="w-2 h-2 rounded-full bg-green-500 mr-2"></div>
+                                <span class="text-sm text-gray-700">课程状态：进行中</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fa fa-clock-o text-gray-500 mr-2"></i>
+                                <span class="text-sm text-gray-700">课程时长：8周</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fa fa-calendar text-gray-500 mr-2"></i>
+                                <span class="text-sm text-gray-700">更新时间：2023年10月</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fa fa-user-o text-gray-500 mr-2"></i>
+                                <span class="text-sm text-gray-700">讲师：王教授</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fa fa-bookmark-o text-gray-500 mr-2"></i>
+                                <span class="text-sm text-gray-700">分类：金融</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fa fa-eye text-gray-500 mr-2"></i>
+                                <span class="text-sm text-gray-700">浏览次数：2,356</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 课程信息 -->
+            <div class="lg:w-2/3">
+                <h1 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-dark mb-4">证券投资常识</h1>
+                <div class="flex flex-wrap gap-2 mb-6">
+                    <span class="bg-primary/10 text-primary text-xs font-semibold px-3 py-1 rounded-full">金融</span>
+                    <span class="bg-secondary/10 text-secondary text-xs font-semibold px-3 py-1 rounded-full">投资</span>
+                    <span class="bg-accent/10 text-accent text-xs font-semibold px-3 py-1 rounded-full">证券市场</span>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+                    <h2 class="text-xl font-bold text-dark mb-4">课程简介</h2>
+                    <p class="text-gray-600 mb-4">
+                        本课程从基础概念到实战技巧，全面解析证券市场投资知识，培养理性投资思维。无论您是投资新手还是有一定经验的投资者，都能从本课程中获得实用的投资知识和技巧。
+                    </p>
+                    <p class="text-gray-600 mb-4">
+                        课程内容包括证券市场基础知识、股票分析方法、债券投资策略、基金选择技巧、风险管理原则等，帮助您建立科学的投资体系，提高投资决策的准确性和成功率。
+                    </p>
+                    <p class="text-gray-600">
+                        通过本课程的学习，您将能够理解证券市场的运行规律，掌握基本的投资分析方法，制定适合自己的投资策略，从而在投资道路上少走弯路，实现资产的保值增值。
+                    </p>
+                </div>
+                
+                <!-- 课程学习按钮 -->
+                <div class="flex flex-wrap gap-4 mb-6">
+                    <a href="#course-materials" class="px-6 py-3 bg-primary text-white rounded-lg font-medium flex items-center justify-center download-button-hover">
+                        <i class="fa fa-download mr-2"></i> 下载课程资料
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+
+        
+        <!-- 课程资料下载 -->
+        <div id="course-materials" class="mb-16">
+            <h2 class="text-2xl font-bold text-dark mb-8 flex items-center">
+                <i class="fa fa-download text-primary mr-3"></i> 课程资料下载
+            </h2>
+            
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <p class="text-gray-600 mb-6">
+                    以下是本课程的相关资料，您可以下载使用。这些资料包括课程PPT、参考资料和练习材料等，希望能帮助您更好地学习本课程。
+                </p>
+                
+                <!-- 课程PPT列表 -->
+                <h3 class="text-lg font-bold text-dark mb-4">课程PPT</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                    <!-- PPT 1 -->
+                    <div class="bg-gray-50 rounded-lg p-4 material-card-hover flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 rounded bg-primary/10 flex items-center justify-center mr-4">
+                                <i class="fa fa-file-powerpoint-o text-primary text-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-dark">第1章：证券市场基础知识</h4>
+                                <p class="text-sm text-gray-500">PDF • 2.4 MB</p>
+                            </div>
+                        </div>
+                        <a href="course-materials/investment/chapter-1.pptx" class="text-primary hover:text-primary/80 transition-colors p-2 rounded-full hover:bg-primary/10" download>
+                            <i class="fa fa-download"></i>
+                        </a>
+                    </div>
+                    
+                    <!-- PPT 2 -->
+                    <div class="bg-gray-50 rounded-lg p-4 material-card-hover flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 rounded bg-primary/10 flex items-center justify-center mr-4">
+                                <i class="fa fa-file-powerpoint-o text-primary text-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-dark">第2章：股票分析方法</h4>
+                                <p class="text-sm text-gray-500">PDF • 3.1 MB</p>
+                            </div>
+                        </div>
+                        <a href="course-materials/investment/chapter-2.pptx" class="text-primary hover:text-primary/80 transition-colors p-2 rounded-full hover:bg-primary/10" download>
+                            <i class="fa fa-download"></i>
+                        </a>
+                    </div>
+                    
+                    <!-- PPT 3 -->
+                    <div class="bg-gray-50 rounded-lg p-4 material-card-hover flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 rounded bg-primary/10 flex items-center justify-center mr-4">
+                                <i class="fa fa-file-powerpoint-o text-primary text-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-dark">第3章：投资策略与风险管理</h4>
+                                <p class="text-sm text-gray-500">PDF • 2.8 MB</p>
+                            </div>
+                        </div>
+                        <a href="course-materials/investment/chapter-3.pptx" class="text-primary hover:text-primary/80 transition-colors p-2 rounded-full hover:bg-primary/10" download>
+                            <i class="fa fa-download"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- 参考资料 -->
+                <h3 class="text-lg font-bold text-dark mb-4">参考资料</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- 参考资料 1 -->
+                    <div class="bg-gray-50 rounded-lg p-4 material-card-hover flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 rounded bg-primary/10 flex items-center justify-center mr-4">
+                                <i class="fa fa-file-text-o text-primary text-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-dark">证券投资基础知识点总结</h4>
+                                <p class="text-sm text-gray-500">PDF • 1.8 MB</p>
+                            </div>
+                        </div>
+                        <a href="course-materials/investment/study-guide.pdf" class="text-primary hover:text-primary/80 transition-colors p-2 rounded-full hover:bg-primary/10" download>
+                            <i class="fa fa-download"></i>
+                        </a>
+                    </div>
+                    
+                    <!-- 参考资料 2 -->
+                    <div class="bg-gray-50 rounded-lg p-4 material-card-hover flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 rounded bg-primary/10 flex items-center justify-center mr-4">
+                                <i class="fa fa-file-excel-o text-primary text-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-dark">投资组合分析模板</h4>
+                                <p class="text-sm text-gray-500">Excel • 0.5 MB</p>
+                            </div>
+                        </div>
+                        <a href="course-materials/investment/portfolio-template.xlsx" class="text-primary hover:text-primary/80 transition-colors p-2 rounded-full hover:bg-primary/10" download>
+                            <i class="fa fa-download"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 讲师介绍 -->
+        <div class="mb-16">
+            <h2 class="text-2xl font-bold text-dark mb-8 flex items-center">
+                <i class="fa fa-user-o text-primary mr-3"></i> 讲师介绍
+            </h2>
+            
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <div class="flex flex-col md:flex-row items-center">
+                    <div class="mb-6 md:mb-0 md:mr-6">
+                        <img src="https://picsum.photos/id/1005/200/200" alt="王教授头像" class="w-32 h-32 rounded-full object-cover border-4 border-white shadow-md">
+                    </div>
+                    <div class="text-center md:text-left">
+                        <h3 class="text-xl font-bold text-dark mb-2">王博士</h3>
+                        <p class="text-primary font-medium mb-4">经济学博士 • CFA FRM</p>
+                        <p class="text-gray-600 mb-4">
+                            王博士拥有15年金融教学和投资实践经验，曾任多家知名金融机构的投资分析师。王博士在证券投资、金融市场分析等领域有着深厚的学术造诣和丰富的实战经验。
+                        </p>
+                        <p class="text-gray-600">
+                            王博士的教学风格深入浅出，注重理论与实践相结合，善于用通俗易懂的语言解释复杂的金融概念和投资策略，深受学生好评。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-dark text-white mt-20 py-12">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <i class="fa fa-graduation-cap text-white text-2xl mr-2"></i>
+                        <h3 class="text-lg font-bold">鹏博课堂</h3>
+                    </div>
+                    <p class="text-gray-400 text-sm">致力于提供高质量的教育内容，帮助每个人拓展知识视野，提升自我。</p>
+                </div>
+                
+                <div>
+                    <h4 class="text-md font-bold mb-4">快速链接</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><a href="index.html" class="hover:text-white transition-colors">首页</a></li>
+                        <li><a href="courses.html" class="hover:text-white transition-colors">课程</a></li>
+                        <li><a href="articles.html" class="hover:text-white transition-colors">文章</a></li>
+                        <li><a href="tools.html" class="hover:text-white transition-colors">小工具</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-md font-bold mb-4">联系我们</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li class="flex items-center"><i class="fa fa-envelope-o mr-2"></i> contact@pengbo.com</li>
+                        <li class="flex items-center"><i class="fa fa-phone mr-2"></i> +86 123 4567 8910</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-md font-bold mb-4">关注我们</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fa fa-weixin text-xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fa fa-weibo text-xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fa fa-youtube-play text-xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors"><i class="fa fa-linkedin text-xl"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-500 text-sm">
+                <p>© 2025 鹏博课堂 Dr. PengWang Academy. 保留所有权利。</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 移动端菜单切换
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+// 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // 导航栏滚动效果
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 10) {
+                header.classList.add('shadow-md');
+            } else {
+                header.classList.remove('shadow-md');
+            }
+        });
+    </script>
+</body>
+</html>
